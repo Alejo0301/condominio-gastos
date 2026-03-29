@@ -1,0 +1,140 @@
+import { useState } from 'react'
+import { CATEGORIAS } from '../../constants/usuarios'
+
+const FORM_INICIAL = {
+  categoria: '',
+  unidad: '',
+  monto: '',
+  notas: '',
+}
+
+export default function GastoForm({ onSubmit, cargando = false, onCancel, initialValues }) {
+  const [form, setForm]   = useState(
+    initialValues
+      ? { categoria: initialValues.categoria, unidad: initialValues.unidad, monto: initialValues.monto, notas: initialValues.notas ?? '' }
+      : FORM_INICIAL
+  )
+  const [error, setError] = useState('')
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setForm(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    if (!form.categoria) return setError('Selecciona una categoría.')
+    if (!form.unidad.trim()) return setError('Describe la unidad o detalle del gasto.')
+    if (!form.monto || Number(form.monto) <= 0) return setError('Ingresa un monto válido.')
+
+    try {
+      await onSubmit({ ...form, monto: Number(form.monto) })
+      if (!initialValues) setForm(FORM_INICIAL)
+    } catch {
+      setError('No se pudo guardar el gasto. Intenta de nuevo.')
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* Categoría */}
+      <div>
+        <label className="block text-sm font-medium text-surface-700 mb-1.5">
+          Categoría <span className="text-red-400">*</span>
+        </label>
+        <select
+          name="categoria"
+          value={form.categoria}
+          onChange={handleChange}
+          className="w-full px-4 py-2.5 rounded-xl border border-surface-200 text-surface-900 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+        >
+          <option value="">Seleccionar categoría...</option>
+          {CATEGORIAS.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Unidad / Detalle */}
+      <div>
+        <label className="block text-sm font-medium text-surface-700 mb-1.5">
+          Descripción / unidad <span className="text-red-400">*</span>
+        </label>
+        <input
+          type="text"
+          name="unidad"
+          value={form.unidad}
+          onChange={handleChange}
+          placeholder="Ej: Varillas de acero 3/8, 100 unidades"
+          className="w-full px-4 py-2.5 rounded-xl border border-surface-200 text-surface-900 placeholder-surface-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+        />
+      </div>
+
+      {/* Monto */}
+      <div>
+        <label className="block text-sm font-medium text-surface-700 mb-1.5">
+          Monto (COP) <span className="text-red-400">*</span>
+        </label>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-surface-400 font-medium">$</span>
+          <input
+            type="number"
+            name="monto"
+            value={form.monto}
+            onChange={handleChange}
+            inputMode="numeric"
+            min="0"
+            step="1000"
+            placeholder="0"
+            className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-surface-200 text-surface-900 placeholder-surface-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+          />
+        </div>
+      </div>
+
+      {/* Notas opcionales */}
+      <div>
+        <label className="block text-sm font-medium text-surface-700 mb-1.5">
+          Notas <span className="text-surface-400 font-normal">(opcional)</span>
+        </label>
+        <textarea
+          name="notas"
+          value={form.notas}
+          onChange={handleChange}
+          rows={3}
+          placeholder="Proveedor, número de factura, observaciones..."
+          className="w-full px-4 py-2.5 rounded-xl border border-surface-200 text-surface-900 placeholder-surface-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition resize-none"
+        />
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
+      {/* Acciones */}
+      <div className="flex gap-3 pt-1">
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 py-2.5 rounded-xl border border-surface-200 text-sm font-medium text-surface-600 hover:bg-surface-50 transition-colors"
+          >
+            Cancelar
+          </button>
+        )}
+        <button
+          type="submit"
+          disabled={cargando}
+          className="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-medium rounded-xl text-sm transition-colors"
+        >
+          {cargando ? 'Guardando...' : initialValues ? 'Guardar cambios' : 'Guardar gasto'}
+        </button>
+      </div>
+    </form>
+  )
+}
