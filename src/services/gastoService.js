@@ -19,10 +19,11 @@ export const crearGasto = async (gasto, usuario) => {
   const docRef = await addDoc(ref(), {
     ...gasto,
     monto: Number(gasto.monto),
+    casaLote: gasto.casaLote ?? '',
     creadoPor: usuario.email,
     nombreUsuario: usuario.nombre,
-    cargoUsuario: usuario.cargo,        // ← cargo del responsable
-    creadoEn: serverTimestamp(),        // guarda fecha Y hora exacta
+    cargoUsuario: usuario.cargo,
+    creadoEn: serverTimestamp(),
   })
   return docRef.id
 }
@@ -44,6 +45,7 @@ export const actualizarGasto = async (id, cambios) => {
   await updateDoc(docRef, {
     ...cambios,
     monto: Number(cambios.monto),
+    casaLote: cambios.casaLote ?? '',
   })
 }
 
