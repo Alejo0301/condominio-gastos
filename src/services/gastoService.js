@@ -21,7 +21,8 @@ export const crearGasto = async (gasto, usuario) => {
     monto: Number(gasto.monto),
     creadoPor: usuario.email,
     nombreUsuario: usuario.nombre,
-    creadoEn: serverTimestamp(),
+    cargoUsuario: usuario.cargo,        // ← cargo del responsable
+    creadoEn: serverTimestamp(),        // guarda fecha Y hora exacta
   })
   return docRef.id
 }
@@ -33,7 +34,6 @@ export const obtenerGastos = async () => {
   return snapshot.docs.map(d => ({
     id: d.id,
     ...d.data(),
-    // Convertir Timestamp de Firestore a Date de JS
     creadoEn: d.data().creadoEn?.toDate() ?? new Date(),
   }))
 }

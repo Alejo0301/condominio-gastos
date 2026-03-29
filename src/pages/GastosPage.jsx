@@ -6,24 +6,24 @@ import { CATEGORIAS } from '../constants/usuarios'
 import { generarPDF } from '../services/pdfService'
 import GastoForm from '../components/gastos/GastoForm'
 
-// ── Pill de categoría ────────────────────────────────────────────────────────
+// ── Pill de categoría ─────────────────────────────────────────────────────────
 const COLORES_CAT = {
-  'Materiales de construcción': 'bg-amber-50 text-amber-700',
-  'Mano de obra':               'bg-blue-50 text-blue-700',
-  'Honorarios profesionales':   'bg-purple-50 text-purple-700',
-  'Trámites legales / permisos':'bg-red-50 text-red-700',
+  'Materiales de construcción': 'bg-amber-50 text-amber-700 border border-amber-100',
+  'Mano de obra':               'bg-blue-50 text-blue-700 border border-blue-100',
+  'Honorarios profesionales':   'bg-purple-50 text-purple-700 border border-purple-100',
+  'Trámites legales / permisos':'bg-red-50 text-red-700 border border-red-100',
 }
 
 const CategoriaPill = ({ categoria }) => (
-  <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${COLORES_CAT[categoria] ?? 'bg-surface-100 text-surface-600'}`}>
+  <span className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full ${COLORES_CAT[categoria] ?? 'bg-surface-100 text-surface-600'}`}>
     {categoria}
   </span>
 )
 
-// ── Modal de edición ─────────────────────────────────────────────────────────
+// ── Modal de edición ──────────────────────────────────────────────────────────
 const ModalEditar = ({ gasto, onSave, onClose, cargando }) => (
-  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/30">
-    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in slide-in-from-bottom-4">
       <div className="flex items-center justify-between mb-5">
         <h2 className="font-semibold text-surface-900">Editar gasto</h2>
         <button onClick={onClose} className="p-1.5 rounded-lg text-surface-400 hover:bg-surface-100 transition">
@@ -32,12 +32,7 @@ const ModalEditar = ({ gasto, onSave, onClose, cargando }) => (
           </svg>
         </button>
       </div>
-      <GastoForm
-        initialValues={gasto}
-        onSubmit={onSave}
-        onCancel={onClose}
-        cargando={cargando}
-      />
+      <GastoForm initialValues={gasto} onSubmit={onSave} onCancel={onClose} cargando={cargando} />
     </div>
   </div>
 )
@@ -46,19 +41,19 @@ export default function GastosPage() {
   const { gastos, cargando, eliminar, editar } = useGastos()
   const { esAdmin } = useAuth()
 
-  const [busqueda,  setBusqueda]  = useState('')
-  const [categoria, setCategoria] = useState('')
-  const [editando,  setEditando]  = useState(null)
-  const [guardando, setGuardando] = useState(false)
-  const [exportando,setExportando]= useState(false)
+  const [busqueda,   setBusqueda]   = useState('')
+  const [categoria,  setCategoria]  = useState('')
+  const [editando,   setEditando]   = useState(null)
+  const [guardando,  setGuardando]  = useState(false)
+  const [exportando, setExportando] = useState(false)
 
-  // ── Filtros ──────────────────────────────────────────────────────────────
   const gastosFiltrados = useMemo(() => {
     return gastos.filter(g => {
       const coincideBusqueda =
         !busqueda ||
-        g.unidad.toLowerCase().includes(busqueda.toLowerCase()) ||
-        g.creadoPor.toLowerCase().includes(busqueda.toLowerCase())
+        g.unidad?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        g.nombreUsuario?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        g.cargoUsuario?.toLowerCase().includes(busqueda.toLowerCase())
       const coincideCategoria = !categoria || g.categoria === categoria
       return coincideBusqueda && coincideCategoria
     })
@@ -66,7 +61,6 @@ export default function GastosPage() {
 
   const total = useMemo(() => calcularTotal(gastosFiltrados), [gastosFiltrados])
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleEliminar = async (id) => {
     if (!window.confirm('¿Eliminar este gasto? Esta acción no se puede deshacer.')) return
     await eliminar(id)
@@ -84,11 +78,8 @@ export default function GastosPage() {
 
   const handleExportarPDF = () => {
     setExportando(true)
-    try {
-      generarPDF(gastosFiltrados)
-    } finally {
-      setTimeout(() => setExportando(false), 1000)
-    }
+    try { generarPDF(gastosFiltrados) }
+    finally { setTimeout(() => setExportando(false), 1000) }
   }
 
   if (cargando) {
@@ -107,13 +98,14 @@ export default function GastosPage() {
         <div>
           <h1 className="text-xl font-semibold text-surface-900">Historial de gastos</h1>
           <p className="text-sm text-surface-400 mt-0.5">
-            {gastosFiltrados.length} registros · Total: <span className="font-medium text-surface-700">{formatCOP(total)}</span>
+            {gastosFiltrados.length} registros ·{' '}
+            <span className="font-medium text-surface-700">{formatCOP(total)}</span>
           </p>
         </div>
         <button
           onClick={handleExportarPDF}
           disabled={exportando || gastosFiltrados.length === 0}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white text-sm font-medium rounded-xl transition-colors flex-shrink-0"
+          className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white text-sm font-medium rounded-xl transition-colors flex-shrink-0 shadow-sm"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -130,7 +122,7 @@ export default function GastosPage() {
           </svg>
           <input
             type="text"
-            placeholder="Buscar por descripción o usuario..."
+            placeholder="Buscar por descripción, responsable o cargo..."
             value={busqueda}
             onChange={e => setBusqueda(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-surface-200 text-sm text-surface-900 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
@@ -146,23 +138,25 @@ export default function GastosPage() {
         </select>
       </div>
 
-      {/* Tabla — desktop */}
       {gastosFiltrados.length === 0 ? (
-        <div className="text-center py-16 text-surface-400">
+        <div className="text-center py-20 text-surface-400">
+          <svg className="w-12 h-12 mx-auto mb-3 text-surface-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
+          </svg>
           <p className="text-base font-medium">Sin gastos registrados</p>
           <p className="text-sm mt-1">Cambia los filtros o registra el primer gasto</p>
         </div>
       ) : (
         <>
-          {/* Vista tabla (sm+) */}
+          {/* Tabla desktop (sm+) */}
           <div className="hidden sm:block bg-white rounded-2xl border border-surface-100 shadow-card overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-surface-100 bg-surface-50">
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-500 uppercase tracking-wider">Fecha</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-500 uppercase tracking-wider">Fecha y hora</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-500 uppercase tracking-wider">Categoría</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold text-surface-500 uppercase tracking-wider">Descripción</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-500 uppercase tracking-wider hidden lg:table-cell">Usuario</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-surface-500 uppercase tracking-wider hidden lg:table-cell">Responsable</th>
                   <th className="text-right px-5 py-3 text-xs font-semibold text-surface-500 uppercase tracking-wider">Monto</th>
                   {esAdmin && <th className="px-3 py-3" />}
                 </tr>
@@ -170,11 +164,25 @@ export default function GastosPage() {
               <tbody className="divide-y divide-surface-50">
                 {gastosFiltrados.map(g => (
                   <tr key={g.id} className="hover:bg-surface-50 transition-colors">
-                    <td className="px-5 py-3.5 text-surface-500 whitespace-nowrap">{formatFecha(g.creadoEn)}</td>
-                    <td className="px-5 py-3.5"><CategoriaPill categoria={g.categoria} /></td>
-                    <td className="px-5 py-3.5 text-surface-700 max-w-xs truncate">{g.unidad}</td>
-                    <td className="px-5 py-3.5 text-surface-500 hidden lg:table-cell">{g.nombreUsuario ?? g.creadoPor}</td>
-                    <td className="px-5 py-3.5 text-right font-mono font-medium text-surface-900">{formatCOP(g.monto)}</td>
+                    <td className="px-5 py-3.5 text-surface-500 whitespace-nowrap text-xs">
+                      {formatFecha(g.creadoEn)}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <CategoriaPill categoria={g.categoria} />
+                    </td>
+                    <td className="px-5 py-3.5 text-surface-700 max-w-xs">
+                      <p className="truncate">{g.unidad}</p>
+                      {g.notas && <p className="text-xs text-surface-400 truncate mt-0.5">{g.notas}</p>}
+                    </td>
+                    <td className="px-5 py-3.5 hidden lg:table-cell">
+                      <p className="text-surface-700 text-xs font-medium">{g.nombreUsuario ?? g.creadoPor}</p>
+                      {g.cargoUsuario && (
+                        <p className="text-xs text-surface-400">{g.cargoUsuario}</p>
+                      )}
+                    </td>
+                    <td className="px-5 py-3.5 text-right font-mono font-semibold text-surface-900">
+                      {formatCOP(g.monto)}
+                    </td>
                     {esAdmin && (
                       <td className="px-3 py-3.5">
                         <div className="flex items-center gap-1 justify-end">
@@ -216,7 +224,7 @@ export default function GastosPage() {
             </table>
           </div>
 
-          {/* Vista cards (móvil) */}
+          {/* Cards móvil */}
           <div className="sm:hidden space-y-3">
             {gastosFiltrados.map(g => (
               <div key={g.id} className="bg-white rounded-2xl border border-surface-100 shadow-card p-4">
@@ -225,7 +233,13 @@ export default function GastosPage() {
                   <span className="font-mono font-semibold text-surface-900 flex-shrink-0">{formatCOP(g.monto)}</span>
                 </div>
                 <p className="text-sm text-surface-700 mb-1">{g.unidad}</p>
-                <p className="text-xs text-surface-400">{formatFecha(g.creadoEn)} · {g.nombreUsuario ?? g.creadoPor}</p>
+                <p className="text-xs text-surface-400">
+                  {formatFecha(g.creadoEn)}
+                </p>
+                <p className="text-xs text-surface-500 font-medium mt-0.5">
+                  {g.nombreUsuario ?? g.creadoPor}
+                  {g.cargoUsuario && <span className="font-normal text-surface-400"> · {g.cargoUsuario}</span>}
+                </p>
                 {esAdmin && (
                   <div className="flex gap-2 mt-3 pt-3 border-t border-surface-50">
                     <button
@@ -248,7 +262,6 @@ export default function GastosPage() {
         </>
       )}
 
-      {/* Modal editar */}
       {editando && (
         <ModalEditar
           gasto={editando}

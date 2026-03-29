@@ -7,8 +7,20 @@ export const formatCOP = (monto) =>
     maximumFractionDigits: 0,
   }).format(monto)
 
-// Formatea fecha para mostrar en tabla
+// Formatea fecha + hora para mostrar en tabla
 export const formatFecha = (fecha) => {
+  if (!fecha) return '—'
+  return new Intl.DateTimeFormat('es-CO', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(fecha instanceof Date ? fecha : new Date(fecha))
+}
+
+// Formatea solo la fecha (sin hora) — para el PDF
+export const formatFechaSola = (fecha) => {
   if (!fecha) return '—'
   return new Intl.DateTimeFormat('es-CO', {
     day: '2-digit',

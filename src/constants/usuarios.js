@@ -13,24 +13,22 @@ export const ROLES = {
 }
 
 // Usuarios autorizados con su rol
-// ADMIN puede crear, editar y eliminar gastos
-// EDITOR solo puede crear gastos
 export const USUARIOS_AUTORIZADOS = [
   {
-    email: 'gutierrezyeison436@gmail.com',   // ← cambia por el correo real de tu papá
-    nombre: 'Papá',
+    email: 'papa@tudominio.com',        // ← reemplaza con el correo real
+    nombre: 'Representante Legal',
     cargo: 'Representante Legal',
     rol: ROLES.ADMIN,
   },
   {
-    email: 'arq.andersongutierrez@gmail.com', // ← correo real de tu hermano
-    nombre: 'Hermano',
+    email: 'hermano@tudominio.com',     // ← reemplaza con el correo real
+    nombre: 'Arquitecto',
     cargo: 'Arquitecto',
     rol: ROLES.EDITOR,
   },
   {
-    email: 'gionnygutierrezp@gmail.com',     // ← tu correo
-    nombre: 'Yo',
+    email: 'yo@tudominio.com',          // ← reemplaza con el correo real
+    nombre: 'Gionny',
     cargo: 'Ingeniero',
     rol: ROLES.ADMIN,
   },
