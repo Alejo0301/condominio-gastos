@@ -15,19 +15,19 @@ export const ROLES = {
 // Usuarios autorizados con su rol
 export const USUARIOS_AUTORIZADOS = [
   {
-    email: 'papa@tudominio.com',        // ← reemplaza con el correo real
-    nombre: 'Representante Legal',
+    email: 'gutierrezyeison436@gmail.com',        // ← reemplaza con el correo real
+    nombre: 'Yeison Gutierrez',
     cargo: 'Representante Legal',
     rol: ROLES.ADMIN,
   },
   {
-    email: 'hermano@tudominio.com',     // ← reemplaza con el correo real
-    nombre: 'Arquitecto',
+    email: 'arq.andersongutierrez@gmail.com', // ← reemplaza con el correo real
+    nombre: 'Anderson Gutierrez',
     cargo: 'Arquitecto',
     rol: ROLES.EDITOR,
   },
   {
-    email: 'yo@tudominio.com',          // ← reemplaza con el correo real
+    email: 'gionnygutierrezp@gmail.com',          // ← reemplaza con el correo real
     nombre: 'Gionny',
     cargo: 'Ingeniero',
     rol: ROLES.ADMIN,
