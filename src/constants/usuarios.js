@@ -15,23 +15,23 @@ export const ROLES = {
 // Usuarios autorizados con su rol
 export const USUARIOS_AUTORIZADOS = [
   {
-    email: 'gutierrezyeison436@gmail.com',        // ← reemplaza con el correo real
+    email: 'gutierrezyeison436@gmail.com',
     nombre: 'Yeison Gutierrez',
     cargo: 'Representante Legal',
     rol: ROLES.ADMIN,
   },
   {
-    email: 'arq.andersongutierrez@gmail.com', // ← reemplaza con el correo real
+    email: 'arq.andersongutierrez@gmail.com',
     nombre: 'Anderson Gutierrez',
     cargo: 'Arquitecto',
     rol: ROLES.EDITOR,
   },
   {
-    email: 'gionnygutierrezp@gmail.com',          // ← reemplaza con el correo real
+    email: 'gionnygutierrezp@gmail.com',
     nombre: 'Gionny',
     cargo: 'Ingeniero',
     rol: ROLES.ADMIN,
   },
 ]
 
-export const EMAILS_AUTORIZADOS = USUARIOS_AUTORIZADOS.map(u => u.email)
+export const EMAILS_AUTORIZADOS = USUARIOS_AUTORIZADOS.map(u => u.email.trim().toLowerCase())

@@ -26,8 +26,10 @@ export const onAuthChange = (callback) =>
   onAuthStateChanged(auth, (firebaseUser) => {
     if (!firebaseUser) return callback(null)
 
+    const emailFirebase = firebaseUser.email?.trim().toLowerCase()
+
     const perfil = USUARIOS_AUTORIZADOS.find(
-      u => u.email === firebaseUser.email?.toLowerCase()
+      u => u.email.trim().toLowerCase() === emailFirebase
     )
 
     callback(perfil ? { ...firebaseUser, ...perfil } : null)
