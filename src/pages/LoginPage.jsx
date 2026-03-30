@@ -88,7 +88,7 @@ export default function LoginPage() {
             fontSize: '11px', fontWeight: 600, letterSpacing: '0.2em',
             color: '#8A8A8A', textTransform: 'uppercase', marginBottom: '8px',
           }}>
-            Escala Hayn · Constructora
+            Escala AYN · Constructora
           </div>
           <h1 style={{
             fontSize: '26px', fontWeight: 600, color: '#1A1A1A',

@@ -429,7 +429,7 @@ export default function DashboardPage() {
       </div>
 
       <p style={{ textAlign: 'center', fontSize: '11px', color: '#CCCCCC', paddingBottom: '8px' }}>
-        Condominio La Trinidad · Pinchote, Santander · Uso interno · Escala Hayn Constructora
+        Condominio La Trinidad · Pinchote, Santander · Uso interno · Escala AYN Constructora
       </p>
 
       <style>{`
