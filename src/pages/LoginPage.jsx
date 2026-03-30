@@ -24,72 +24,192 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+    <div style={{
+      minHeight: '100vh',
+      background: '#F8F7F4',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+      fontFamily: "'DM Sans', sans-serif",
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
 
-        {/* Logo / Encabezado */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-600 mb-5">
-            <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-            </svg>
+      {/* Fondo decorativo geométrico */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden',
+      }}>
+        {/* Columnas edificio — decoración sutil */}
+        <div style={{
+          position: 'absolute', right: '-40px', bottom: '-20px',
+          display: 'flex', alignItems: 'flex-end', gap: '6px', opacity: 0.06,
+        }}>
+          {[120, 180, 240, 160, 100].map((h, i) => (
+            <div key={i} style={{
+              width: '40px', height: `${h}px`,
+              background: i === 1 || i === 2 ? '#C9A84C' : '#1A1A1A',
+              borderRadius: '4px 4px 0 0',
+            }} />
+          ))}
+        </div>
+        <div style={{
+          position: 'absolute', left: '-60px', top: '10%',
+          display: 'flex', alignItems: 'flex-end', gap: '5px', opacity: 0.04,
+          transform: 'rotate(180deg)',
+        }}>
+          {[80, 140, 100, 60].map((h, i) => (
+            <div key={i} style={{
+              width: '32px', height: `${h}px`,
+              background: i === 1 ? '#C9A84C' : '#1A1A1A',
+              borderRadius: '4px 4px 0 0',
+            }} />
+          ))}
+        </div>
+      </div>
+
+      <div style={{ width: '100%', maxWidth: '400px', position: 'relative' }}>
+
+        {/* Logo + Header */}
+        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+          {/* Logo mark — silueta de edificios */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'flex-end', gap: '3px',
+            marginBottom: '16px',
+          }}>
+            <div style={{ width: '8px', height: '28px', background: '#1A1A1A', borderRadius: '3px 3px 0 0' }} />
+            <div style={{ width: '8px', height: '40px', background: '#C9A84C', borderRadius: '3px 3px 0 0' }} />
+            <div style={{ width: '8px', height: '52px', background: '#1A1A1A', borderRadius: '3px 3px 0 0' }} />
+            <div style={{ width: '8px', height: '36px', background: '#8A8A8A', borderRadius: '3px 3px 0 0' }} />
+            <div style={{ width: '8px', height: '24px', background: '#1A1A1A', borderRadius: '3px 3px 0 0' }} />
           </div>
-          <h1 className="text-2xl font-semibold text-surface-900 tracking-tight">
+
+          <div style={{
+            fontSize: '11px', fontWeight: 600, letterSpacing: '0.2em',
+            color: '#8A8A8A', textTransform: 'uppercase', marginBottom: '8px',
+          }}>
+            Escala Hayn · Constructora
+          </div>
+          <h1 style={{
+            fontSize: '26px', fontWeight: 600, color: '#1A1A1A',
+            letterSpacing: '-0.02em', margin: 0, lineHeight: 1.2,
+          }}>
             Control de Gastos
           </h1>
-          <p className="mt-1 text-sm text-surface-500">
-            Proyecto Condominio — Acceso restringido
+          <p style={{ marginTop: '6px', fontSize: '14px', color: '#8A8A8A' }}>
+            Proyecto La Trinidad · Acceso restringido
           </p>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-card border border-surface-100 p-8 space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-surface-700 mb-1.5">
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-              placeholder="tu@correo.com"
-              className="w-full px-4 py-2.5 rounded-xl border border-surface-200 text-surface-900 placeholder-surface-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
-            />
-          </div>
+        {/* Card formulario */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '20px',
+          border: '1px solid #EBEBEB',
+          boxShadow: '0 4px 32px rgba(0,0,0,0.06)',
+          padding: '36px',
+        }}>
+          {/* Línea dorada superior */}
+          <div style={{
+            height: '3px', background: 'linear-gradient(90deg, #C9A84C, #E8C96A)',
+            borderRadius: '2px', marginBottom: '28px',
+          }} />
 
-          <div>
-            <label className="block text-sm font-medium text-surface-700 mb-1.5">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              placeholder="••••••••"
-              className="w-full px-4 py-2.5 rounded-xl border border-surface-200 text-surface-900 placeholder-surface-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
-            />
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-600">
-              {error}
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div>
+              <label style={{
+                display: 'block', fontSize: '12px', fontWeight: 600,
+                color: '#555', marginBottom: '8px', letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+              }}>
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                placeholder="tu@correo.com"
+                style={{
+                  width: '100%', boxSizing: 'border-box',
+                  padding: '12px 16px',
+                  border: '1.5px solid #E8E8E8',
+                  borderRadius: '12px',
+                  fontSize: '14px', color: '#1A1A1A',
+                  background: '#FAFAFA',
+                  outline: 'none', transition: 'border-color 0.2s',
+                  fontFamily: 'inherit',
+                }}
+                onFocus={e => e.target.style.borderColor = '#C9A84C'}
+                onBlur={e => e.target.style.borderColor = '#E8E8E8'}
+              />
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={cargando}
-            className="w-full py-2.5 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-medium rounded-xl text-sm transition-colors"
-          >
-            {cargando ? 'Ingresando...' : 'Ingresar'}
-          </button>
-        </form>
+            <div>
+              <label style={{
+                display: 'block', fontSize: '12px', fontWeight: 600,
+                color: '#555', marginBottom: '8px', letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+              }}>
+                Contraseña
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+                placeholder="••••••••"
+                style={{
+                  width: '100%', boxSizing: 'border-box',
+                  padding: '12px 16px',
+                  border: '1.5px solid #E8E8E8',
+                  borderRadius: '12px',
+                  fontSize: '14px', color: '#1A1A1A',
+                  background: '#FAFAFA',
+                  outline: 'none', transition: 'border-color 0.2s',
+                  fontFamily: 'inherit',
+                }}
+                onFocus={e => e.target.style.borderColor = '#C9A84C'}
+                onBlur={e => e.target.style.borderColor = '#E8E8E8'}
+              />
+            </div>
 
-        <p className="text-center text-xs text-surface-400 mt-6">
+            {error && (
+              <div style={{
+                background: '#FEF2F2', border: '1px solid #FECACA',
+                borderRadius: '10px', padding: '12px 16px',
+                fontSize: '13px', color: '#DC2626',
+              }}>
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={cargando}
+              style={{
+                width: '100%', padding: '13px',
+                background: cargando ? '#D4B86A' : '#C9A84C',
+                color: '#1A1A1A', fontWeight: 700,
+                border: 'none', borderRadius: '12px',
+                fontSize: '14px', cursor: cargando ? 'not-allowed' : 'pointer',
+                letterSpacing: '0.03em',
+                transition: 'background 0.2s, transform 0.1s',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={e => !cargando && (e.target.style.background = '#B8942E')}
+              onMouseLeave={e => !cargando && (e.target.style.background = '#C9A84C')}
+            >
+              {cargando ? 'Ingresando...' : 'Ingresar al sistema'}
+            </button>
+          </form>
+        </div>
+
+        <p style={{
+          textAlign: 'center', fontSize: '12px', color: '#BBBBBB', marginTop: '24px',
+        }}>
           Solo usuarios autorizados del proyecto
         </p>
       </div>

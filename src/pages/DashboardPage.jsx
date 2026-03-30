@@ -10,68 +10,122 @@ import { useAuth } from '../context/AuthContext'
 import { formatCOP, agruparPorCategoria, calcularTotal } from '../utils/formatters'
 import { CATEGORIAS, COLORES_CATEGORIAS, CASAS_LOTES, USUARIOS_AUTORIZADOS } from '../constants/usuarios'
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 const colorPorCategoria = (cat) => {
   const idx = CATEGORIAS.indexOf(cat)
   return idx >= 0 ? COLORES_CATEGORIAS[idx] : '#94a3b8'
 }
 
-// ── Tarjeta de métrica ────────────────────────────────────────────────────────
+// ── Componentes base ──────────────────────────────────────────────────────────
+
+const S = {
+  card: {
+    background: '#FFFFFF',
+    borderRadius: '16px',
+    border: '1px solid #EBEBEB',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+    padding: '24px',
+  },
+  label: {
+    fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em',
+    textTransform: 'uppercase', color: '#AAAAAA', marginBottom: '4px',
+    display: 'block',
+  },
+  sectionTitle: {
+    fontSize: '13px', fontWeight: 600, color: '#1A1A1A', marginBottom: '2px',
+  },
+  sectionSub: {
+    fontSize: '12px', color: '#AAAAAA', marginBottom: '20px',
+  },
+}
+
 const MetricCard = ({ label, value, sub, accent }) => (
-  <div className={`rounded-2xl border p-5 transition-shadow hover:shadow-card-hover ${accent ? 'bg-primary-600 border-primary-700' : 'bg-white border-surface-100 shadow-card'}`}>
-    <p className={`text-xs font-semibold uppercase tracking-widest mb-1 ${accent ? 'text-primary-200' : 'text-surface-400'}`}>{label}</p>
-    <p className={`text-2xl font-semibold leading-tight ${accent ? 'text-white' : 'text-surface-900'}`}>{value}</p>
-    {sub && <p className={`text-xs mt-1 ${accent ? 'text-primary-200' : 'text-surface-400'}`}>{sub}</p>}
+  <div style={{
+    ...S.card,
+    background: accent ? '#1A1A1A' : '#FFFFFF',
+    border: accent ? '1px solid #2A2A2A' : '1px solid #EBEBEB',
+    position: 'relative', overflow: 'hidden',
+  }}>
+    {accent && (
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
+        background: 'linear-gradient(90deg, #C9A84C, #E8C96A)',
+      }} />
+    )}
+    <span style={{
+      ...S.label,
+      color: accent ? '#888' : '#AAAAAA',
+    }}>{label}</span>
+    <div style={{
+      fontSize: '22px', fontWeight: 700, lineHeight: 1.2,
+      color: accent ? '#C9A84C' : '#1A1A1A',
+      fontVariantNumeric: 'tabular-nums',
+      letterSpacing: '-0.02em',
+    }}>{value}</div>
+    {sub && (
+      <div style={{ fontSize: '11px', color: accent ? '#666' : '#AAAAAA', marginTop: '4px' }}>
+        {sub}
+      </div>
+    )}
   </div>
 )
 
-// ── Tooltip personalizado ─────────────────────────────────────────────────────
 const TooltipCustom = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white border border-surface-100 shadow-card rounded-xl px-3 py-2 text-sm">
-      <p className="font-medium text-surface-700 mb-1">{label}</p>
+    <div style={{
+      background: '#FFF', border: '1px solid #EBEBEB',
+      borderRadius: '10px', padding: '10px 14px',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+      fontSize: '12px',
+    }}>
+      <div style={{ fontWeight: 600, color: '#1A1A1A', marginBottom: '4px' }}>{label}</div>
       {payload.map(p => (
-        <p key={p.dataKey} style={{ color: p.color ?? p.fill }}>{formatCOP(p.value)}</p>
+        <div key={p.dataKey} style={{ color: p.color ?? p.fill }}>{formatCOP(p.value)}</div>
       ))}
     </div>
   )
 }
 
-// ── Tooltip para Pie ──────────────────────────────────────────────────────────
 const TooltipPie = ({ active, payload }) => {
   if (!active || !payload?.length) return null
   const { name, value } = payload[0]
   return (
-    <div className="bg-white border border-surface-100 shadow-card rounded-xl px-3 py-2 text-sm">
-      <p className="font-medium text-surface-700">{name}</p>
-      <p className="text-surface-500">{formatCOP(value)}</p>
+    <div style={{
+      background: '#FFF', border: '1px solid #EBEBEB',
+      borderRadius: '10px', padding: '10px 14px',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+      fontSize: '12px',
+    }}>
+      <div style={{ fontWeight: 600, color: '#1A1A1A' }}>{name}</div>
+      <div style={{ color: '#888', marginTop: '2px' }}>{formatCOP(value)}</div>
     </div>
   )
 }
 
-// ── Estado vacío reutilizable ─────────────────────────────────────────────────
 const EmptyState = ({ mensaje = 'Sin datos aún' }) => (
-  <div className="flex flex-col items-center justify-center py-10 text-surface-300">
-    <svg className="w-9 h-9 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+  <div style={{
+    display: 'flex', flexDirection: 'column', alignItems: 'center',
+    justifyContent: 'center', padding: '40px 0', color: '#D0D0D0',
+  }}>
+    <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
     </svg>
-    <p className="text-sm font-medium">{mensaje}</p>
+    <div style={{ fontSize: '13px', fontWeight: 500, marginTop: '8px' }}>{mensaje}</div>
   </div>
 )
+
+// ── Página principal ──────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const { gastos, cargando } = useGastos()
   const { usuario } = useAuth()
   const [filtroCasa, setFiltroCasa] = useState('')
 
-  // ── Filtro por casa/lote ──────────────────────────────────────────────────
   const gastosFiltrados = useMemo(() =>
     filtroCasa ? gastos.filter(g => g.casaLote === filtroCasa) : gastos,
     [gastos, filtroCasa]
   )
 
-  // ── Métricas ──────────────────────────────────────────────────────────────
   const total        = useMemo(() => calcularTotal(gastosFiltrados), [gastosFiltrados])
   const porCategoria = useMemo(() => agruparPorCategoria(gastosFiltrados), [gastosFiltrados])
 
@@ -89,7 +143,6 @@ export default function DashboardPage() {
     [porCategoria]
   )
 
-  // ── Datos para gráfica de barras por categoría con colores ────────────────
   const dataCategorias = useMemo(() =>
     porCategoria
       .sort((a, b) => b.total - a.total)
@@ -97,7 +150,6 @@ export default function DashboardPage() {
     [porCategoria]
   )
 
-  // ── Datos para gráfica de dona (proporciones por categoría) ───────────────
   const dataDona = useMemo(() =>
     porCategoria
       .sort((a, b) => b.total - a.total)
@@ -110,7 +162,6 @@ export default function DashboardPage() {
     [porCategoria]
   )
 
-  // ── Datos por responsable ────────────────────────────────────────────────
   const dataResponsables = useMemo(() => {
     const mapa = {}
     gastosFiltrados.forEach(g => {
@@ -120,7 +171,6 @@ export default function DashboardPage() {
     return Object.entries(mapa).map(([nombre, total]) => ({ nombre, total }))
   }, [gastosFiltrados])
 
-  // ── Datos por casa/lote ──────────────────────────────────────────────────
   const dataCasas = useMemo(() => {
     const mapa = {}
     gastos.forEach(g => {
@@ -130,7 +180,6 @@ export default function DashboardPage() {
     return Object.entries(mapa).map(([casa, total]) => ({ casa, total }))
   }, [gastos])
 
-  // ── Flujo acumulado mes a mes ─────────────────────────────────────────────
   const porMes = useMemo(() => {
     const mapa = {}
     gastosFiltrados.forEach(g => {
@@ -148,39 +197,60 @@ export default function DashboardPage() {
 
   if (cargando) {
     return (
-      <div className="flex items-center justify-center min-h-96">
-        <div className="w-7 h-7 rounded-full border-2 border-primary-500 border-t-transparent animate-spin" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
+        <div style={{
+          width: '28px', height: '28px', borderRadius: '50%',
+          border: '2.5px solid #C9A84C', borderTopColor: 'transparent',
+          animation: 'spin 0.8s linear infinite',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       </div>
     )
   }
 
   return (
-    <div className="px-4 py-6 lg:px-8 max-w-screen-xl mx-auto space-y-6">
+    <div style={{
+      padding: '24px 16px',
+      maxWidth: '1280px',
+      margin: '0 auto',
+      fontFamily: "'DM Sans', sans-serif",
+      display: 'flex', flexDirection: 'column', gap: '16px',
+    }}>
 
       {/* ── Encabezado ── */}
-      <div className="bg-white rounded-2xl border border-surface-100 shadow-card p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div style={{ ...S.card, padding: '24px 28px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block w-2 h-2 rounded-full bg-primary-500" />
-              <span className="text-xs font-semibold text-primary-600 uppercase tracking-widest">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C9A84C' }} />
+              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', color: '#C9A84C', textTransform: 'uppercase' }}>
                 Condominio La Trinidad · Pinchote, Santander
               </span>
             </div>
-            <h1 className="text-2xl font-semibold text-surface-900 leading-tight">
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1A1A1A', letterSpacing: '-0.02em', margin: 0 }}>
               Hola, {usuario?.nombre} 👋
             </h1>
-            <p className="text-sm text-surface-400 mt-1">
-              <span className="font-medium text-accent-600">{usuario?.cargo}</span>
+            <p style={{ fontSize: '13px', color: '#AAAAAA', marginTop: '4px' }}>
+              <span style={{ color: '#C9A84C', fontWeight: 600 }}>{usuario?.cargo}</span>
               {' · '}
               {new Date().toLocaleDateString('es-CO', { dateStyle: 'long' })}
             </p>
           </div>
           <Link
             to="/nuevo-gasto"
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white text-sm font-semibold rounded-xl transition-all shadow-sm flex-shrink-0"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              padding: '12px 20px',
+              background: '#C9A84C', color: '#1A1A1A',
+              fontWeight: 700, fontSize: '13px',
+              borderRadius: '12px', textDecoration: 'none',
+              letterSpacing: '0.02em', flexShrink: 0,
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#B8942E'}
+            onMouseLeave={e => e.currentTarget.style.background = '#C9A84C'}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             Registrar gasto
@@ -188,36 +258,31 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Filtro por casa/lote ── */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-sm font-medium text-surface-500">Filtrar por:</span>
-        <button
-          onClick={() => setFiltroCasa('')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-            filtroCasa === ''
-              ? 'bg-primary-600 text-white border-primary-600'
-              : 'bg-white text-surface-600 border-surface-200 hover:border-primary-400 hover:text-primary-600'
-          }`}
-        >
-          Todos los lotes
-        </button>
-        {CASAS_LOTES.map(cl => (
+      {/* ── Filtros por lote ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '12px', fontWeight: 600, color: '#AAAAAA', marginRight: '4px' }}>Filtrar por lote:</span>
+        {['', ...CASAS_LOTES].map(cl => (
           <button
-            key={cl}
+            key={cl || 'todos'}
             onClick={() => setFiltroCasa(cl)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-              filtroCasa === cl
-                ? 'bg-primary-600 text-white border-primary-600'
-                : 'bg-white text-surface-600 border-surface-200 hover:border-primary-400 hover:text-primary-600'
-            }`}
+            style={{
+              padding: '6px 14px', borderRadius: '20px',
+              fontSize: '12px', fontWeight: 600,
+              border: '1.5px solid',
+              borderColor: filtroCasa === cl ? '#C9A84C' : '#E8E8E8',
+              background: filtroCasa === cl ? '#C9A84C' : '#FFFFFF',
+              color: filtroCasa === cl ? '#1A1A1A' : '#7A7A7A',
+              cursor: 'pointer', transition: 'all 0.15s',
+              fontFamily: 'inherit',
+            }}
           >
-            {cl}
+            {cl || 'Todos'}
           </button>
         ))}
       </div>
 
       {/* ── Métricas ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
         <MetricCard
           label="Total invertido"
           value={formatCOP(total)}
@@ -241,27 +306,23 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* ── Fila 1: Barras categoría + Dona ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-
-        {/* Barras por categoría con colores */}
-        <div className="lg:col-span-3 bg-white rounded-2xl border border-surface-100 shadow-card p-6">
-          <h2 className="text-sm font-semibold text-surface-700 mb-1">Gastos por categoría</h2>
-          <p className="text-xs text-surface-400 mb-5">Cada categoría tiene su color identificador</p>
+      {/* ── Fila 1: Barras + Dona ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="charts-row-1">
+        <div style={S.card}>
+          <div style={S.sectionTitle}>Gastos por categoría</div>
+          <div style={S.sectionSub}>Cada categoría con su color identificador</div>
           {dataCategorias.length === 0 ? <EmptyState /> : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={dataCategorias} margin={{ top: 0, right: 0, left: 0, bottom: 40 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F5F5F5" />
                 <XAxis
                   dataKey="categoria"
-                  tick={{ fontSize: 10, fill: '#94a3b8' }}
+                  tick={{ fontSize: 10, fill: '#BBBBBB' }}
                   tickFormatter={v => v.split(' ')[0]}
-                  angle={-35}
-                  textAnchor="end"
-                  interval={0}
+                  angle={-35} textAnchor="end" interval={0}
                 />
                 <YAxis
-                  tick={{ fontSize: 10, fill: '#94a3b8' }}
+                  tick={{ fontSize: 10, fill: '#BBBBBB' }}
                   tickFormatter={v => `$${(v / 1_000_000).toFixed(1)}M`}
                 />
                 <Tooltip content={<TooltipCustom />} />
@@ -275,39 +336,27 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Dona de proporciones */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-surface-100 shadow-card p-6">
-          <h2 className="text-sm font-semibold text-surface-700 mb-1">Proporción por categoría</h2>
-          <p className="text-xs text-surface-400 mb-3">Top 6 rubros</p>
+        <div style={S.card}>
+          <div style={S.sectionTitle}>Proporción por categoría</div>
+          <div style={S.sectionSub}>Top 6 rubros del proyecto</div>
           {dataDona.length === 0 ? <EmptyState /> : (
             <>
               <ResponsiveContainer width="100%" height={160}>
                 <PieChart>
-                  <Pie
-                    data={dataDona}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={45}
-                    outerRadius={75}
-                    paddingAngle={3}
-                    dataKey="value"
-                  >
-                    {dataDona.map((entry, i) => (
-                      <Cell key={i} fill={entry.fill} />
-                    ))}
+                  <Pie data={dataDona} cx="50%" cy="50%" innerRadius={45} outerRadius={72} paddingAngle={3} dataKey="value">
+                    {dataDona.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   </Pie>
                   <Tooltip content={<TooltipPie />} />
                 </PieChart>
               </ResponsiveContainer>
-              {/* Leyenda compacta */}
-              <div className="space-y-1.5 mt-2">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
                 {dataDona.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: item.fill }} />
-                      <span className="text-xs text-surface-600 truncate">{item.name}</span>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.fill, flexShrink: 0 }} />
+                      <span style={{ fontSize: '12px', color: '#555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</span>
                     </div>
-                    <span className="text-xs font-mono font-medium text-surface-700 flex-shrink-0">
+                    <span style={{ fontSize: '11px', fontFamily: 'monospace', fontWeight: 600, color: '#1A1A1A', flexShrink: 0 }}>
                       {total > 0 ? `${((item.value / total) * 100).toFixed(0)}%` : '0%'}
                     </span>
                   </div>
@@ -319,33 +368,21 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Fila 2: Por responsable + Por casa/lote ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-        {/* Barras por responsable */}
-        <div className="bg-white rounded-2xl border border-surface-100 shadow-card p-6">
-          <h2 className="text-sm font-semibold text-surface-700 mb-1">Gastos por responsable</h2>
-          <p className="text-xs text-surface-400 mb-5">Quién ha registrado más inversión</p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }} className="charts-row-2">
+        <div style={S.card}>
+          <div style={S.sectionTitle}>Gastos por responsable</div>
+          <div style={S.sectionSub}>Quién ha registrado más inversión</div>
           {dataResponsables.length === 0 ? <EmptyState /> : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={dataResponsables} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 10, fill: '#94a3b8' }}
-                  tickFormatter={v => `$${(v / 1_000_000).toFixed(1)}M`}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="nombre"
-                  tick={{ fontSize: 11, fill: '#475569' }}
-                  width={100}
-                />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F5F5F5" horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 10, fill: '#BBBBBB' }} tickFormatter={v => `$${(v / 1_000_000).toFixed(1)}M`} />
+                <YAxis type="category" dataKey="nombre" tick={{ fontSize: 11, fill: '#555' }} width={100} />
                 <Tooltip content={<TooltipCustom />} />
                 <Bar dataKey="total" radius={[0, 6, 6, 0]}>
-                  {dataResponsables.map((entry, i) => {
-                    const usuario = USUARIOS_AUTORIZADOS.find(u => u.nombre === entry.nombre)
-                    const colores = ['#16a34a', '#7c3aed', '#0891b2']
-                    return <Cell key={i} fill={colores[i % colores.length]} />
+                  {dataResponsables.map((_, i) => {
+                    const cols = ['#C9A84C', '#8A8A8A', '#1A1A1A']
+                    return <Cell key={i} fill={cols[i % cols.length]} />
                   })}
                 </Bar>
               </BarChart>
@@ -353,25 +390,18 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Barras por casa/lote */}
-        <div className="bg-white rounded-2xl border border-surface-100 shadow-card p-6">
-          <h2 className="text-sm font-semibold text-surface-700 mb-1">Inversión por casa / lote</h2>
-          <p className="text-xs text-surface-400 mb-5">Distribución entre lotes del proyecto</p>
+        <div style={S.card}>
+          <div style={S.sectionTitle}>Inversión por casa / lote</div>
+          <div style={S.sectionSub}>Distribución entre lotes del proyecto</div>
           {dataCasas.length === 0 ? <EmptyState mensaje="Sin gastos asignados a lotes" /> : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={dataCasas} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="casa" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <YAxis
-                  tick={{ fontSize: 10, fill: '#94a3b8' }}
-                  tickFormatter={v => `$${(v / 1_000_000).toFixed(1)}M`}
-                />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F5F5F5" />
+                <XAxis dataKey="casa" tick={{ fontSize: 11, fill: '#BBBBBB' }} />
+                <YAxis tick={{ fontSize: 10, fill: '#BBBBBB' }} tickFormatter={v => `$${(v / 1_000_000).toFixed(1)}M`} />
                 <Tooltip content={<TooltipCustom />} />
                 <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                  <Cell fill="#16a34a" />
-                  <Cell fill="#7c3aed" />
-                  <Cell fill="#0891b2" />
-                  <Cell fill="#d97706" />
+                  {['#C9A84C', '#8A8A8A', '#2A2A2A', '#E8C96A'].map((c, i) => <Cell key={i} fill={c} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -379,31 +409,35 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Fila 3: Flujo acumulado ── */}
-      <div className="bg-white rounded-2xl border border-surface-100 shadow-card p-6">
-        <h2 className="text-sm font-semibold text-surface-700 mb-1">Flujo de caja acumulado</h2>
-        <p className="text-xs text-surface-400 mb-5">Evolución de la inversión mes a mes</p>
+      {/* ── Flujo acumulado ── */}
+      <div style={S.card}>
+        <div style={S.sectionTitle}>Flujo de caja acumulado</div>
+        <div style={S.sectionSub}>Evolución de la inversión mes a mes</div>
         {porMes.length === 0 ? <EmptyState mensaje="Registra gastos para ver la tendencia" /> : (
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={porMes} margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="mes" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-              <YAxis
-                tick={{ fontSize: 11, fill: '#94a3b8' }}
-                tickFormatter={v => `$${(v / 1_000_000).toFixed(1)}M`}
-              />
+              <CartesianGrid strokeDasharray="3 3" stroke="#F5F5F5" />
+              <XAxis dataKey="mes" tick={{ fontSize: 11, fill: '#BBBBBB' }} />
+              <YAxis tick={{ fontSize: 11, fill: '#BBBBBB' }} tickFormatter={v => `$${(v / 1_000_000).toFixed(1)}M`} />
               <Tooltip content={<TooltipCustom />} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Line type="monotone" dataKey="monto" name="Gasto del mes" stroke="#7c3aed" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="acumulado" name="Acumulado" stroke="#16a34a" strokeWidth={2.5} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="monto" name="Gasto del mes" stroke="#8A8A8A" strokeWidth={2} dot={{ r: 4, fill: '#8A8A8A' }} />
+              <Line type="monotone" dataKey="acumulado" name="Acumulado" stroke="#C9A84C" strokeWidth={2.5} dot={{ r: 4, fill: '#C9A84C' }} />
             </LineChart>
           </ResponsiveContainer>
         )}
       </div>
 
-      <p className="text-center text-xs text-surface-300 pb-2">
-        Condominio La Trinidad · Pinchote, Santander · Uso interno
+      <p style={{ textAlign: 'center', fontSize: '11px', color: '#CCCCCC', paddingBottom: '8px' }}>
+        Condominio La Trinidad · Pinchote, Santander · Uso interno · Escala Hayn Constructora
       </p>
+
+      <style>{`
+        @media (min-width: 1024px) {
+          .charts-row-1 { grid-template-columns: 3fr 2fr !important; }
+          .charts-row-2 { grid-template-columns: 1fr 1fr !important; }
+        }
+      `}</style>
     </div>
   )
 }
