@@ -31,7 +31,7 @@ const NAV_ITEMS = [
   },
 ]
 
-// Logo mark SVG — silueta de edificios Escala Hayn
+// Logo mark SVG — silueta de edificios Escala AYN
 function LogoMark({ size = 'md' }) {
   const heights = size === 'sm'
     ? [12, 18, 24, 16, 10]
@@ -92,7 +92,7 @@ export default function AppLayout() {
                 La Trinidad
               </div>
               <div style={{ fontSize: '10px', color: '#AAAAAA', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                Escala Hayn
+                Escala AYN Constructora
               </div>
             </div>
           </div>
