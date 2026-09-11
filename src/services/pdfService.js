@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import { formatCOP, formatFecha, calcularTotal, agruparPorCategoria } from '../utils/formatters'
+import { formatCOP, calcularTotal, agruparPorCategoria } from '../utils/formatters'
 
 // Genera el doc PDF y lo retorna como blob URL para previsualizar
 const buildPDF = (gastos, filtros = {}) => {
@@ -131,9 +131,8 @@ const buildPDF = (gastos, filtros = {}) => {
 
   autoTable(doc, {
     startY: y,
-    head: [['Fecha', 'Lote', 'Categoría', 'Descripción', 'Responsable', 'Monto (COP)']],
+    head: [['Lote', 'Categoría', 'Descripción', 'Responsable', 'Monto (COP)']],
     body: gastos.map(g => [
-      formatFecha(g.creadoEn),
       g.casaLote ?? '—',
       g.categoria,
       g.unidad,
@@ -144,15 +143,14 @@ const buildPDF = (gastos, filtros = {}) => {
     headStyles: { fillColor: NEGRO, textColor: BLANCO, fontStyle: 'bold' },
     alternateRowStyles: { fillColor: GRIS_CL },
     columnStyles: {
-      0: { cellWidth: 22 },
-      1: { cellWidth: 22 },
-      2: { cellWidth: 32 },
-      3: { cellWidth: 'auto' },
-      4: { cellWidth: 28 },
-      5: { halign: 'right', cellWidth: 28 },
+      0: { cellWidth: 24 },
+      1: { cellWidth: 34 },
+      2: { cellWidth: 'auto' },
+      3: { cellWidth: 32 },
+      4: { halign: 'right', cellWidth: 30 },
     },
     margin: { left: 14, right: 14 },
-    foot: [['', '', '', '', 'TOTAL', formatCOP(total)]],
+    foot: [['', '', '', 'TOTAL', formatCOP(total)]],
     footStyles: {
       fillColor: DORADO,
       textColor: NEGRO,
