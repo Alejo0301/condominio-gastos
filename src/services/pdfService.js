@@ -17,9 +17,35 @@ const buildPDF = (gastos, filtros = {}) => {
   const porCat = agruparPorCategoria(gastos)
   const W      = doc.internal.pageSize.getWidth()
 
+  // ── Texto de resumen según filtros activos ──────────────────────────────────
+  const formatFechaCorta = (iso) => {
+    if (!iso) return null
+    const [a, m, d] = iso.split('-')
+    return `${d}/${m}/${a}`
+  }
+  const partesResumen = [filtros.casaLote || 'Todos los lotes']
+  if (filtros.categoria)   partesResumen.push(filtros.categoria)
+  if (filtros.responsable) partesResumen.push(filtros.responsable)
+  const d1 = formatFechaCorta(filtros.desde)
+  const d2 = formatFechaCorta(filtros.hasta)
+  if (d1 && d2)      partesResumen.push(`${d1} a ${d2}`)
+  else if (d1)       partesResumen.push(`Desde ${d1}`)
+  else if (d2)       partesResumen.push(`Hasta ${d2}`)
+  const resumenTexto = `Resumen de gastos: ${partesResumen.join(' · ')}`
+
+  // Ajusta el resumen al ancho disponible del encabezado (máx. 2 líneas)
+  const anchoResumen = W - 44 - 14
+  let lineasResumen = doc.splitTextToSize(resumenTexto, anchoResumen)
+  if (lineasResumen.length > 2) {
+    lineasResumen = lineasResumen.slice(0, 2)
+    lineasResumen[1] = lineasResumen[1].replace(/.{3}$/, '...')
+  }
+  const lineasExtra = lineasResumen.length - 1
+
   // ── Encabezado ─────────────────────────────────────────────────────────────
+  const altoEncabezado = 36 + lineasExtra * 4.5
   doc.setFillColor(...NEGRO)
-  doc.rect(0, 0, W, 36, 'F')
+  doc.rect(0, 0, W, altoEncabezado, 'F')
 
   // Línea dorada superior
   doc.setFillColor(...DORADO)
@@ -50,17 +76,18 @@ const buildPDF = (gastos, filtros = {}) => {
   doc.setTextColor(...DORADO)
   doc.text('Control de Gastos — Proyecto La Trinidad · Pinchote, Santander', 44, 23)
 
+  doc.setFontSize(7.5)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(...BLANCO)
+  lineasResumen.forEach((linea, i) => doc.text(linea, 44, 29 + i * 4.5))
+
+  doc.setFont('helvetica', 'normal')
   doc.setTextColor(180, 180, 180)
   doc.setFontSize(7.5)
-  doc.text(`Reporte generado el ${hoy}`, 44, 29)
-
-  if (filtros.desde || filtros.hasta) {
-    const rango = `Período: ${filtros.desde ?? '—'} al ${filtros.hasta ?? '—'}`
-    doc.text(rango, 44, 34)
-  }
+  doc.text(`Reporte generado el ${hoy}`, 44, 29 + lineasExtra * 4.5 + 5.5)
 
   // ── Resumen ejecutivo ──────────────────────────────────────────────────────
-  let y = 48
+  let y = 48 + lineasExtra * 4.5
 
   doc.setTextColor(...NEGRO)
   doc.setFontSize(11)

@@ -261,7 +261,7 @@ export default function DashboardPage() {
       {/* ── Filtros por lote ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '12px', fontWeight: 600, color: '#AAAAAA', marginRight: '4px' }}>Filtrar por lote:</span>
-        {['', ...CASAS_LOTES].map(cl => (
+        {['', ...CASAS_LOTES.map(l => l.nombre)].map(cl => (
           <button
             key={cl || 'todos'}
             onClick={() => setFiltroCasa(cl)}

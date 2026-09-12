@@ -77,7 +77,7 @@ export default function GastoForm({ onSubmit, cargando = false, onCancel, initia
         >
           <option value="">Seleccionar casa o lote...</option>
           {CASAS_LOTES.map(cl => (
-            <option key={cl} value={cl}>{cl}</option>
+            <option key={cl.nombre} value={cl.nombre}>{cl.nombre}</option>
           ))}
         </select>
       </div>

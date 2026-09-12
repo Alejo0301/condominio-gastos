@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useGastos } from '../hooks/useGastos'
 import { useAuth } from '../context/AuthContext'
 import { formatCOP, formatFecha, calcularTotal } from '../utils/formatters'
-import { CATEGORIAS, CASAS_LOTES, USUARIOS_AUTORIZADOS, COLORES_CATEGORIAS } from '../constants/usuarios'
+import { CATEGORIAS, CASAS_LOTES, USUARIOS_AUTORIZADOS, COLORES_CATEGORIAS, obtenerLote } from '../constants/usuarios'
 import { previsualizarPDF } from '../services/pdfService'
 import GastoForm from '../components/gastos/GastoForm'
 
@@ -35,7 +35,8 @@ const CategoriaPill = ({ categoria }) => (
 // ── Pill de casa/lote ─────────────────────────────────────────────────────────
 const CasaPill = ({ casaLote }) => {
   if (!casaLote) return null
-  const color = casaLote === 'Casa Lote 4' ? '#C9A84C' : '#8A8A8A'
+  const esCasa = obtenerLote(casaLote)?.esCasa ?? true
+  const color = esCasa ? '#C9A84C' : '#5B6B8C'
   return (
     <span style={{
       display: 'inline-block',
@@ -160,8 +161,11 @@ export default function GastosPage() {
     setExportando(true)
     try {
       previsualizarPDF(gastosFiltrados, {
-        desde: fechaDesde || undefined,
-        hasta: fechaHasta || undefined,
+        casaLote:    casaLote    || undefined,
+        categoria:   categoria   || undefined,
+        responsable: responsable || undefined,
+        desde:       fechaDesde  || undefined,
+        hasta:       fechaHasta  || undefined,
       })
     } finally {
       setTimeout(() => setExportando(false), 1000)
@@ -262,7 +266,7 @@ export default function GastosPage() {
 
           <select value={casaLote} onChange={e => setCasaLote(e.target.value)} style={selectStyle}>
             <option value="">Todos los lotes</option>
-            {CASAS_LOTES.map(cl => <option key={cl} value={cl}>{cl}</option>)}
+            {CASAS_LOTES.map(cl => <option key={cl.nombre} value={cl.nombre}>{cl.nombre}</option>)}
           </select>
         </div>
 

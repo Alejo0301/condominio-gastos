@@ -32,10 +32,18 @@ export const COLORES_CATEGORIAS = [
 ]
 
 // Casas / Lotes del proyecto
+// esCasa: true  → una casa individual (se puede filtrar/reportar por separado)
+// esCasa: false → contenedor de gastos administrativos del proyecto completo,
+//                 no se debe repartir entre casas
 export const CASAS_LOTES = [
-  'Casa Lote 4',
-  'Casa Lote 13',
+  { nombre: 'Casa Lote 4',  tipo: 'casa',    esCasa: true },
+  { nombre: 'Casa Lote 13', tipo: 'casa',    esCasa: true },
+  { nombre: 'Casa Lote 12', tipo: 'casa',    esCasa: true },
+  { nombre: 'Administración General', tipo: 'general', esCasa: false },
 ]
+
+// Busca la definición de un lote por el nombre guardado en el gasto (g.casaLote)
+export const obtenerLote = (nombre) => CASAS_LOTES.find(l => l.nombre === nombre)
 
 // Roles del sistema
 export const ROLES = {
