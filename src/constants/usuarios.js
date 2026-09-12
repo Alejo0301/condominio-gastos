@@ -63,7 +63,7 @@ export const USUARIOS_AUTORIZADOS = [
     email: 'arq.andersongutierrez@gmail.com',
     nombre: 'Anderson Gutierrez',
     cargo: 'Arquitecto',
-    rol: ROLES.EDITOR,
+    rol: ROLES.ADMIN,
   },
   {
     email: 'Lauradulcey2015@gmail.com',
